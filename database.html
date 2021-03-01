@@ -1,0 +1,73 @@
+<html>
+<head>
+  <script src="https://www.gstatic.com/firebasejs/5.5.0/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyCsBkaJRzWtmo0VVW2dZdQJzVxaCaTlQhg",
+      authDomain: "kodecrypt-252da.firebaseapp.com",
+      databaseURL: "https://kodecrypt-252da.firebaseio.com",
+      projectId: "kodecrypt-252da",
+      storageBucket: "kodecrypt-252da.appspot.com",
+      messagingSenderId: "409389653612"
+    };
+    firebase.initializeApp(config);
+  </script>
+<script>
+var i=1;
+firebase.database().ref("questions").once("value").then(function(data) {
+  data=data.val();
+  var temp="q"+i;
+  while(data[temp]){
+    var te=data[temp];
+    // console.log(te)
+    document.getElementById("content").innerHTML+="<br/><br/><b>Question</b> "+i+"<br/>"
+    document.getElementById("content").innerHTML+= "<textarea id=q"+i+" rows=4 cols=50> "+te.questionStatement+"</textarea><br/><br/>"
+    document.getElementById("content").innerHTML+="<b>Options</b> "+i+"<br/>"
+    document.getElementById("content").innerHTML+= "<textarea id='a"+i+"1' >"+ te[1]+"</textarea><br/>"
+    document.getElementById("content").innerHTML+= "<textarea id='a"+i+"2' >"+ te[2]+"</textarea><br/>"
+    document.getElementById("content").innerHTML+= "<textarea id='a"+i+"3' >"+ te[3]+"</textarea><br/>"
+    document.getElementById("content").innerHTML+= "<textarea id='a"+i+"4' >"+ te[4]+"</textarea><br/>"
+    i++;
+    temp="q"+i;
+  }
+});
+function save() {
+  var p=1;
+  var temp="q"+p;
+  var questions = firebase.database().ref("questions");
+  var newQ={};
+  while(document.getElementById(temp)){
+    newQ[temp]={
+      questionStatement: document.getElementById(temp).value,
+      1:document.getElementById("a"+p+"1").value,
+      2:document.getElementById("a"+p+"2").value,
+      3:document.getElementById("a"+p+"3").value,
+      4:document.getElementById("a"+p+"4").value
+    }
+    p++;
+    temp="q"+p;
+  }
+  firebase.database().ref("questions").set(newQ, function (err) {
+    alert("Saved to DB");
+    console.log(err);
+  });
+}
+  function logout()
+  {
+    alert("Logging out...");
+  firebase.auth().signOut();
+  window.open("./something.html", "_self")
+  return true;
+  }
+</script>
+</head>
+<body>
+  <div id="content">
+  </div>
+  <div>
+    <button onclick="save()">Save!</button>
+    <button onclick="logout()">Logout</button>
+  </div>
+</body>
+</html>

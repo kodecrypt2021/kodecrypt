@@ -1,0 +1,138 @@
+* {box-sizing: border-box}
+
+/* Add padding to containers */
+.container {
+  padding: 16px;
+}
+body{
+  color: #d9b69e;
+}
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: none;
+  background: black;
+  border: solid #d9b69e;
+  color: #d9b69e;
+}
+
+input[type=text]:focus, input[type=password]:focus {
+  background-color: black;
+  outline: none;
+  border: solid #d9b69e;
+  color: #d9b69e;
+}
+input[type=email], input[type=password] {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: none;
+  background: black;
+  border: solid #d9b69e;
+  color: #d9b69e;
+}
+
+input[type=email]:focus, input[type=password]:focus {
+  background-color: black;
+  outline: none;
+  border: solid #d9b69e;
+  color: #d9b69e;
+}
+
+
+input[type=number], input[type=password] {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: none;
+  background: black;
+  border: solid #d9b69e;
+  color: #d9b69e;
+}
+
+input[type=number]:focus, input[type=password]:focus {
+  background-color: black;
+  outline: none;
+  border: solid #d9b69e;
+  color: #d9b69e;
+}
+
+div
+
+/* Overwrite default styles of hr */
+hr {
+  border: 1px solid #f1f1f1;
+  margin-bottom: 25px;
+
+}
+
+/* Set a style for the submit/register button */
+.registerbtn {
+  background-color: #d9b69e;
+  color:black;
+  padding: 16px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  font-size: 150%;
+  border: solid #d9b69e;
+}
+
+.registerbtn:hover {
+  background-color: #d9b69e;
+  color: white;
+}
+
+.headings{
+  color:#d9b69e;
+}
+/* Add a blue text color to links */
+a {
+  color: dodgerblue;
+}
+
+/* Set a grey background color and center the text of the "sign in" section */
+.signin {
+  background-color: #f1f1f1;
+  text-align: center;
+}
+ #question{
+  color: #d9b69e;
+  font-family: 'Raleway';
+  border-radius: 10px;
+  border: solid #d9b69e;
+  border-style: groove;
+   padding:10px;
+ }
+
+#submitButton
+{
+   background-color: #d9b69e;
+  color:black;
+  padding: 16px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  font-size: 150%;
+  border: solid #d9b69e;
+}
+#submitButton:hover {
+  background-color: #d9b69e;
+  color: white;
+}
+ #timer{
+   background-color:black;
+   font-size: 200%;
+   color: #d9b69e;
+   box-shadow: 10px 10px 10px 10px;
+   size: 20%;
+   text-align: center;
+ }

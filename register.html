@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta ="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Kodecrypt 2018</title>
+
+  <script src="https://www.gstatic.com/firebasejs/5.5.0/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyCsBkaJRzWtmo0VVW2dZdQJzVxaCaTlQhg",
+      authDomain: "kodecrypt-252da.firebaseapp.com",
+      databaseURL: "https://kodecrypt-252da.firebaseio.com",
+      projectId: "kodecrypt-252da",
+      storageBucket: "kodecrypt-252da.appspot.com",
+      messagingSenderId: "409389653612"
+    };
+    firebase.initializeApp(config);
+  </script>
+  <script>
+    var ph1 = null;
+
+  function validate() {
+    var z=/^[a-z]{1,40}\d{0,10}\@[a-z]{1,5}\.[a-z]{2,3}$/;
+
+
+    var name1=document.getElementById('name1').value;
+    var email1=document.getElementById('email1').value;
+    ph1=document.getElementById('ph1').value;
+
+    var clg1=document.getElementById('clg1').value;
+    var name2=document.getElementById('name2').value||null;
+    var CollegeName = "removeSpacesInName989@33";
+    var email2=document.getElementById('email2').value||null;
+    var ph2=document.getElementById('ph2').value||null;
+    var clg2=document.getElementById('clg2').value||null;
+
+    firebase.database().ref("users").once('value').then(function(values){
+      var data=null;
+      if(values)
+        data=values.val()
+      if(!data||!data[ph1]){
+        if(!name1)
+          alert("Enter Name of participant 1!");
+        else if(!email1)
+            alert("Enter email-id of participant 1!");
+        else if(!clg1)
+              alert("Enter college of participant 1!");
+        else if(String(ph1).length != 10)
+              alert("Enter valid phone number");
+        //else if(!email1||!email1.match(z))
+            //alert("Enter valid email-id of participant 1!");
+        else{
+
+          const auth = firebase.auth();
+            const temp = name1.replace(/ /g,'')
+            const promise = auth.createUserWithEmailAndPassword(ph1+temp+"@kc2019.com", CollegeName).then(function(user){
+              console.log("User is registerd and logged in");
+
+
+            var timestamp=new Date();
+            timestamp=timestamp.toString()
+            promise.catch(e=>alert(e));
+            firebase.database().ref("users/"+ph1).set({
+            name:name1,
+            email:email1,
+            clg:clg1,
+            at: timestamp,
+            partner:{
+              name:name2,
+              email:email2,
+              clg:clg2,
+              ph:ph2
+            }
+          })
+          firebase.database().ref("count").once('value').then(function(values){
+            if(ph2)
+              firebase.database().ref("count").set(values.val()+2)
+              else {
+                firebase.database().ref("count").set(values.val()+1)
+              }
+            })
+          document.getElementById("quiz").style.display="block";
+          document.getElementById("register").style.display="none";
+          renderQuestions();
+
+
+            }, function(error){
+
+            });
+
+
+
+
+
+            
+        }
+      }
+      else {
+        alert("User details already registered!")
+      }
+    })
+  }
+  window.noOfQuestions = 0;
+
+ function renderQuestions()
+  {
+    var ref = firebase.database().ref().child("questions");
+    ref.once("value", function(snapshot)
+  {
+    var questions = snapshot.val();
+    //alert(questions);
+    var i = 0;
+    for(var question in questions)
+    {
+
+        var div = document.createElement("div");
+        //div.setAttribute("style", "padding-left:2%;");
+        div.setAttribute("style", "padding-right:2%;");
+
+        div.innerHTML = "<h3 id='question'>"+ questions[question]["questionStatement"] + "</h1>";
+        var j=1;
+        for(var option in questions[question])
+        {
+          if(option != "questionStatement")
+            div.innerHTML += '<input type="radio" style="margin-left:5%;" value="'+String(j++)+'" name="q'+ String(i) + '">' + questions[question][option]+' <br>';
+        }
+        div.innerHTML += "<hr>";
+        i+=1;
+        window.noOfQuestions = i;
+        document.getElementById("quiz").appendChild(div);
+    }
+    var distance =600;
+    var x = setInterval(function() {
+      var minutes =Math.floor(distance/60);
+      var seconds = Math.floor(distance%60);
+      if(seconds<10)
+        seconds="0"+seconds;
+      if(minutes<10)
+        minutes="0"+minutes;
+      document.getElementById("timer").innerHTML = minutes + ":" + seconds;
+      distance--;
+      if (distance < 0) {
+          clearInterval(x);
+          evaluateAndUpdate();
+      }
+    }, 1000);
+    var submitButton = document.createElement("button");
+    submitButton.innerHTML = "Finish Test";
+    submitButton.setAttribute("onclick", "evaluateAndUpdate()");
+     submitButton.setAttribute("id", "submitButton");
+    document.getElementById("quiz").appendChild(submitButton);
+  })
+  }
+  function evaluateAndUpdate()
+  {
+    //alert("I am clicked");
+    var answers = [];
+    var i =0;
+    for(i=0;i<window.noOfQuestions;i++)
+    {
+      var answer = document.querySelector('input[name = "q'+String(i)+ '"]:checked')?Number(document.querySelector('input[name = "q'+String(i)+ '"]:checked').value) : 0;
+      answers.push(answer)
+    }
+    var ref = firebase.database().ref().child("users").child(ph1).child("answers");
+    ref.set(answers);
+    document.getElementById("quiz").style.display="none";
+    document.getElementById("done").style.display="block";
+  }
+  </script>
+  <!-- Bootstrap Core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom Fonts -->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+  <link href="vendor/simple-line-icons/css/simple-line-icons.css" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link href="css/stylish-portfolio.min.css" rel="stylesheet">
+  <link href="css/register.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+  <!-- Navigation -->
+
+  <section class="callout" id="register" style="background-color: black;">
+  <div class="container">
+    <h1 class="headings">Register</h1>
+    <hr>
+    <h3 class="headings">Participant 1*</h1>
+
+      <label for="name1"><b class="headings">Name*</b></label>
+      <input type="text" placeholder="Enter Name" id="name1" required>
+    <label for="email1"><b class="headings">Email*</b></label>
+    <input type="email" placeholder="Enter Email" id="email1" required>
+    <br>
+    <label for="ph1"><b class="headings">Phone Number*</b></label><br>
+    <input type="number" placeholder="Enter Phone Number" id="ph1" required><br>
+
+    <label for="clg1"><b class="headings">College Name*</b></label>
+    <input type="text" placeholder="Enter College Name" id="clg1" required>
+    <hr>
+    <h3 class="headings">Participant 2(Optional)</h1>
+      <label for="name2"><b class="headings">Name</b></label>
+      <input type="text" placeholder="Enter Name" id="name2" >
+      <label for="email2"><b class="headings">Email</b></label>
+      <input type="email" placeholder="Enter Email" id="email2" >
+      <br>
+      <label for="ph2"><b class="headings">Phone Number</b></label><br>
+      <input type="number" placeholder="Enter Phone Number" id="ph2" ><br>
+
+      <label for="clg2"><b class="headings">College Name</b></label>
+      <input type="text" placeholder="Enter College Name" id="clg2" ><hr>
+    <a class = "btn  js-scroll-trigger" href="#quiz"><button onclick="validate()" class="registerbtn js-scroll-trigger" href="#quiz">Register and take test</button></a>
+  </div>
+  </section>
+  <section class="callout" id="quiz" style="background-color: black;display:none">
+    <div class="row" style="padding:30px;">
+    <h2 class="mx-auto mb-5 col-sm-10" style="color: #d9b69e; text-align:right" >Quiz</h2>
+    <div class="container col-sm-2" id="timer"></div>
+  </div>
+  </section>
+  <div class="container text-center" id="done" style="display:none;color:black;">
+    <h2>Thank you for taking the test! You'll be informed if you qualify to the further rounds. :)</h2>
+    <h3>Stay tuned to our <a href="http://facebook.com/KODECRYPTCBIT">facebook page</a> for more details! </h3>
+  </div>
+
+  <footer class="footer text-center">
+    <div class="container">
+      <ul class="list-inline mb-5">
+        <li class="list-inline-item">
+          <a class="social-link rounded-circle text-white mr-3" href="https://www.facebook.com/KODECRYPTCBIT/">
+            <i class="icon-social-facebook"></i>
+          </a>
+        </li>
+
+      </ul>
+      <p class="text-muted small mb-0"> Kodecrypt 2018</p>
+      <p class="text-muted small mb-0"> <a href="http://www.cbit.ac.in" target="_blank">Chaitanya Bharathi Institute Of Technology.</a></p>
+    </div>
+  </footer>
+
+  <!-- Scroll to Top Button-->
+  <!--
+  <a class="scroll-to-top rounded js-scroll-trigger" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+-->
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Plugin JavaScript -->
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="js/stylish-portfolio.min.js"></script>
+
+</body>
+
+</html>
